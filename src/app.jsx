@@ -13,18 +13,40 @@ const anecdotes = [
 
 export function App() {
   const [selected, setSelected] = useState(0);
+  const [points, setPoints] = useState(() =>
+    Array.from({ length: anecdotes.length }).fill(0)
+  );
+  const selectedVotes = points[selected];
 
-  const handleClick = () => {
+  const addPoint = () => {
+    setPoints((votes) => {
+      const copy = [...votes];
+      copy[selected] += 1;
+
+      return copy;
+    });
+  };
+
+  const nextAnecdote = () => {
     const randomIndex = Math.floor(Math.random() * 8);
     setSelected(randomIndex);
   };
 
   return (
     <div>
-      <button type="button" onClick={handleClick}>
-        next anecdote
-      </button>
+      <div style={{ display: "flex", gap: 8 }}>
+        <button type="button" onClick={addPoint}>
+          vote
+        </button>
+        <button type="button" onClick={nextAnecdote}>
+          next anecdote
+        </button>
+      </div>
       <div style={{ maxWidth: 640 }}>{anecdotes[selected]}</div>
+      <div>
+        has <strong>{selectedVotes}</strong>{" "}
+        {selectedVotes === 1 ? "vote" : "votes"}
+      </div>
     </div>
   );
 }
