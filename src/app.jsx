@@ -11,12 +11,34 @@ const anecdotes = [
   "The only way to go fast, is to go well.",
 ];
 
+function Display(props) {
+  const { anecdote, points } = props;
+
+  return (
+    <div>
+      <div style={{ maxWidth: 640 }}>{anecdote}</div>
+      <div>
+        has <strong>{points}</strong> {points === 1 ? "vote" : "votes"}
+      </div>
+    </div>
+  );
+}
+
+function getFavoriteAnecdote(anecdotes, points) {
+  const maxPoints = Math.max(...points);
+  const index = points.findIndex((point) => point === maxPoints);
+  const anecdote = anecdotes[index];
+
+  return { anecdote, points: maxPoints };
+}
+
 export function App() {
   const [selected, setSelected] = useState(0);
   const [points, setPoints] = useState(() =>
     Array.from({ length: anecdotes.length }).fill(0)
   );
   const selectedVotes = points[selected];
+  const favorite = getFavoriteAnecdote(anecdotes, points);
 
   const addPoint = () => {
     setPoints((votes) => {
@@ -28,12 +50,13 @@ export function App() {
   };
 
   const nextAnecdote = () => {
-    const randomIndex = Math.floor(Math.random() * 8);
+    const randomIndex = Math.floor(Math.random() * anecdotes.length);
     setSelected(randomIndex);
   };
 
   return (
     <div>
+      <h2>Anecdote of the day</h2>
       <div style={{ display: "flex", gap: 8 }}>
         <button type="button" onClick={addPoint}>
           vote
@@ -42,11 +65,9 @@ export function App() {
           next anecdote
         </button>
       </div>
-      <div style={{ maxWidth: 640 }}>{anecdotes[selected]}</div>
-      <div>
-        has <strong>{selectedVotes}</strong>{" "}
-        {selectedVotes === 1 ? "vote" : "votes"}
-      </div>
+      <Display anecdote={anecdotes[selected]} points={selectedVotes} />
+      <h2>Today's favorite</h2>
+      <Display anecdote={favorite.anecdote} points={favorite.points} />
     </div>
   );
 }
